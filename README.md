@@ -15,6 +15,9 @@ history, taste profile, and how your ratings compare to global consensus.
 - **You vs. The Crowd** — where your taste diverges most from TMDB consensus
 - **Contrarian Profile** — are you a generous rater, harsh critic, or well-calibrated?
 
+<img width="2544" height="1265" alt="image" src="https://github.com/user-attachments/assets/53a31927-d178-4c3b-a1fe-6802a3571399" />
+
+
 ## How It Works
 
 Letterboxd doesn't grant API access for data visualization projects, so Reel
@@ -67,6 +70,17 @@ Open `http://localhost:5173` in your browser.
 3. Click **Data** in the top navigation
 4. Click **Export your data** and download the zip file
 5. Upload the zip file to Reel Resume
+
+### Known Limitations
+- TV shows and anime may have incorrect TMDB matches
+- Diary data only goes back to when you started using the diary feature
+- Ratings vs TMDB comparisons exclude films with ambiguous matches
+
+### Roadmap
+- Country/language breakdown map
+- Watch activity over time chart
+- Decade breakdown
+- Improved TMDB matching
 
 ## Attribution
 
