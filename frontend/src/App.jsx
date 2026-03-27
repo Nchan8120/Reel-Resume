@@ -116,6 +116,17 @@ const loadCachedProfile = async (username) => {
             {loading ? "Analyzing..." : "Generate My Resume"}
           </button>
           {error && <p className="text-red-400 text-sm">{error}</p>}
+          <p className="text-xs text-gray-600">
+            Open source on{" "}
+            
+              <a href="https://github.com/Nchan8120/Reel-Resume"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-400 transition-colors underline"
+            >
+              GitHub
+            </a>
+          </p>
         </div>
       ) : (
         <div className="flex flex-col min-h-screen">
@@ -127,12 +138,22 @@ const loadCachedProfile = async (username) => {
                 <span className="text-gray-400 text-sm">@{username}</span>
               )}
             </div>
-            <button
-              onClick={() => { setData(null); setFile(null); setUsername(null) }}
-              className="text-sm text-gray-400 hover:text-white transition-colors"
-            >
-              ← Upload another
-            </button>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://github.com/Nchan8120/Reel-Resume"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                GitHub ↗
+              </a>
+              <button
+                onClick={() => { setData(null); setFile(null); setUsername(null) }}
+                className="text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                ← Upload another
+              </button>
+            </div>
           </div>
 
           {/* Tab navigation */}
