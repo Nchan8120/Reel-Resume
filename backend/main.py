@@ -43,7 +43,10 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # Vite dev server
+        allow_origins=[
+        "http://localhost:5173", # vite dev server
+        "https://reel-resume-pied.vercel.app/", # deploy
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
