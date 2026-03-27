@@ -26,7 +26,7 @@ export default function App() {
   useEffect(() => {
     if (!data) return
     data.directors.slice(0, 3).forEach(async (d) => {
-      const res = await axios.get(`http://127.0.0.1:8000/director-image?name=${encodeURIComponent(d.director)}`)
+      const res = await axios.get(`https://reel-resume.onrender.com/director-image?name=${encodeURIComponent(d.director)}`)
       if (res.data.image_url) {
         setDirectorImages(prev => ({ ...prev, [d.director]: res.data.image_url }))
       }
@@ -35,13 +35,13 @@ export default function App() {
 
 
   useEffect(() => {
-  axios.get("http://127.0.0.1:8000/profiles")
+  axios.get("https://reel-resume.onrender.com/profiles")
     .then(res => setCachedProfiles(res.data.profiles))
     .catch(() => {})
   }, [])
 
 const loadCachedProfile = async (username) => {
-  const res = await axios.get(`http://127.0.0.1:8000/profiles/${username}`)
+  const res = await axios.get(`https://reel-resume.onrender.com/profiles/${username}`)
   setData(res.data)
   setUsername(res.data.user?.username || username)
   }
@@ -53,7 +53,7 @@ const loadCachedProfile = async (username) => {
     const formData = new FormData()
     formData.append("file", file)
     try {
-      const res = await axios.post("http://127.0.0.1:8000/analyze", formData)
+      const res = await axios.post("https://reel-resume.onrender.com/analyze", formData)
       setData(res.data)
       setUsername(res.data.user?.username || null)
     } catch (err) {
