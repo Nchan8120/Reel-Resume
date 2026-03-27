@@ -4,6 +4,8 @@ import zipfile
 import io
 import pandas as pd
 import math
+import json
+from pathlib import Path
 from reelresume.ingest.letterboxd import load_export_from_bytes, parse_ratings, parse_diary, build_film_table, parse_profile
 from reelresume.ingest.enrich import enrich_films
 from reelresume.analysis.stats import (
@@ -15,6 +17,27 @@ from reelresume.analysis.stats import (
     contrarian_summary,
     watcher_profile,
 )
+
+PROFILES_DIR = Path("data/cache/profiles")
+PROFILES_DIR.mkdir(parents=True, exist_ok=True)
+
+def save_profile_cache(username: str, data: dict):
+    path = PROFILES_DIR / f"{username}.json"
+    with open(path, "w") as f:
+        json.dump(data, f)
+
+
+def load_profile_cache(username: str) -> dict | None:
+    path = PROFILES_DIR / f"{username}.json"
+    if path.exists():
+        with open(path) as f:
+            return json.load(f)
+    return None
+
+
+def list_cached_profiles() -> list[str]:
+    return [p.stem for p in PROFILES_DIR.glob("*.json")]
+
 
 app = FastAPI()
 
@@ -53,7 +76,7 @@ async def analyze(file: UploadFile = File(...)):
 
     profile_data["favorite_films"] = favorite_films
 
-    return {
+    result = {
         "summary": rating_summary(enriched),
         "rating_distribution": rating_distribution(enriched).to_dict(),
         "genres": genre_stats(enriched).to_dict(orient="records"),
@@ -66,6 +89,12 @@ async def analyze(file: UploadFile = File(...)):
         "top_genres": genre_stats(enriched).head(3).to_dict(orient="records"),
         "user": clean_dict({k: v for k, v in profile_data.items() if k != "favorite_slugs"}),
     }
+
+    username = profile_data.get("username")
+    if username:
+        save_profile_cache(username, result)
+
+    return result
 
 @app.get("/director-image")
 async def director_image(name: str):
@@ -89,3 +118,15 @@ def clean_dict(d: dict) -> dict:
         k: (None if isinstance(v, float) and (math.isnan(v) or math.isinf(v)) else v)
         for k, v in d.items()
     }
+
+@app.get("/profiles")
+async def get_profiles():
+    return {"profiles": list_cached_profiles()}
+
+
+@app.get("/profiles/{username}")
+async def get_profile(username: str):
+    data = load_profile_cache(username)
+    if not data:
+        return {"error": "Profile not found"}
+    return data

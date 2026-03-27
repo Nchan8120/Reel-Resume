@@ -21,6 +21,7 @@ export default function App() {
   const [username, setUsername] = useState(null)
   const [activeTab, setActiveTab] = useState("Overview")
   const [directorImages, setDirectorImages] = useState({})
+  const [cachedProfiles, setCachedProfiles] = useState([])
 
   useEffect(() => {
     if (!data) return
@@ -32,6 +33,18 @@ export default function App() {
     })
   }, [data])
 
+
+  useEffect(() => {
+  axios.get("http://127.0.0.1:8000/profiles")
+    .then(res => setCachedProfiles(res.data.profiles))
+    .catch(() => {})
+  }, [])
+
+const loadCachedProfile = async (username) => {
+  const res = await axios.get(`http://127.0.0.1:8000/profiles/${username}`)
+  setData(res.data)
+  setUsername(res.data.user?.username || username)
+  }
 
   const handleUpload = async () => {
     if (!file) return
@@ -77,6 +90,24 @@ export default function App() {
             />
             {file && <p className="text-sm text-green-400">{file.name}</p>}
           </div>
+
+          {cachedProfiles.length > 0 && (
+            <div className="w-full bg-gray-900 rounded-xl p-5 flex flex-col gap-3">
+              <p className="text-white font-medium text-sm">Previously analyzed</p>
+              <div className="flex flex-col gap-2">
+                {cachedProfiles.map((profile) => (
+                  <button
+                    key={profile}
+                    onClick={() => loadCachedProfile(profile)}
+                    className="flex items-center justify-between bg-gray-800 hover:bg-gray-700 transition-colors rounded-lg px-4 py-3 text-sm"
+                  >
+                    <span className="text-white">@{profile}</span>
+                    <span className="text-gray-400">View dashboard →</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <button
             onClick={handleUpload}
             disabled={!file || loading}
@@ -97,7 +128,7 @@ export default function App() {
               )}
             </div>
             <button
-              onClick={() => { setData(null); setFile(null); setUsername(res.data.user?.username || null) }}
+              onClick={() => { setData(null); setFile(null); setUsername(null) }}
               className="text-sm text-gray-400 hover:text-white transition-colors"
             >
               ← Upload another
